@@ -47,12 +47,6 @@ class Portfolio:
         else:
             return False, '{symbol} did not exist in the portfolio.'.format(symbol=symbol)
 
-    def total_allocation(self):
-        pass
-
-    def risk_exposure(self):
-        pass
-
     def in_portfolio(self, symbol) -> bool:
 
         if symbol in self.positions:
@@ -69,4 +63,13 @@ class Portfolio:
             return True
         elif purchase_price > current_price:
             return False
+
+    def total_allocation(self):
+        pass
+
+    def risk_exposure(self):
+        pass
+
+    def total_market_value(self):
+        pass
 
