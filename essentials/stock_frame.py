@@ -66,3 +66,37 @@ class StockFrame:
         price_df = price_df.set_index(keys=['symbol', 'datetime'])
 
         return price_df
+
+    def add_rows(self, data: dict) -> None:
+
+        column_names = ['open', 'close', 'high', 'low', 'volume']
+
+        for symbol in data:
+
+            # Parse timestamp
+            time_stamp = pd.to_datetime( #This might be changed with Binance
+                data[symbol]['quoteTimeInLong'],
+                unit='ms',
+                origin='unix'
+            )
+
+            # Define our index
+            row_id = (symbol, time_stamp)
+
+            # Define values
+            # TODO THIS WILL NEED TO BE CHANGED WITH THE BINANCE API
+            row_values = [
+                data[symbol]['openPrice'],
+                data[symbol]['closePrice'],
+                data[symbol]['highPrice'],
+                data[symbol]['lowPrice'],
+                data[symbol]['askSize'] + data[symbol]['bidSize']
+            ]
+
+            # New row
+            new_row = pd.Series(data=row_values)
+
+            # Add the row
+            self.frame.loc[row_id, column_names] = new_row.values
+            self.frame.sort_index(inplace=True)
+
