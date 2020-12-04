@@ -46,3 +46,27 @@ class Portfolio:
             return True, '{symbol} was successfully removed.'.format(symbol=symbol)
         else:
             return False, '{symbol} did not exist in the portfolio.'.format(symbol=symbol)
+
+    def total_allocation(self):
+        pass
+
+    def risk_exposure(self):
+        pass
+
+    def in_portfolio(self, symbol) -> bool:
+
+        if symbol in self.positions:
+            return True
+        else:
+            return False
+
+    def is_profitable(self, symbol: str, current_price: float) -> float:
+
+        # Grab the purchase price
+        purchase_price = self.positions[symbol]['purchase_price']
+
+        if purchase_price <= current_price:
+            return True
+        elif purchase_price > current_price:
+            return False
+
