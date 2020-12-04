@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from typing import Dict
 from typing import Union
 from typing import Optional
@@ -39,3 +39,10 @@ class Portfolio:
                 )
         else:
             raise TypeError("Positions must be a list of dictionaries.")
+
+    def remove_position(self, symbol: str) -> Tuple[bool, str]:
+        if symbol in self.positions:
+            del self.positions[symbol]
+            return True, '{symbol} was successfully removed.'.format(symbol=symbol)
+        else:
+            return False, '{symbol} did not exist in the portfolio.'.format(symbol=symbol)
