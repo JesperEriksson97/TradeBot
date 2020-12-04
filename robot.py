@@ -10,6 +10,10 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 
+from typing import List
+from typing import Dict
+from typing import Union
+
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path, verbose=True)
 
@@ -54,7 +58,6 @@ class PyRobot:
         else:
             return False
 
-
     @property
     def post_market_open(self) -> bool:
         post_market_end_time = datetime.now().replace(hour=22, minute=30, second=00, tzinfo=timezone.utc).timestamp()
@@ -76,6 +79,21 @@ class PyRobot:
             return True
         else:
             return False
+
+    def create_portfolio(self):
+        pass
+
+    def create_trade(self):
+        pass
+
+    def create_stock_frame(self):
+        pass
+
+    def grab_current_quotes(self) -> dict :
+        pass
+
+    def grab_historical_prices(self) -> List[Dict] :
+        pass
 
 
 
