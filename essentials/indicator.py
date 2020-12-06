@@ -122,4 +122,35 @@ class Indicator:
         return self._frame
 
     def sma(self, period: int) -> pd.DataFrame:
+        locals_data = locals()  # Shows me every argument that was passed in the function.
+        del locals_data['self']
+
+        column_name = 'sma'
+        self._current_indicators[column_name] = {}
+        self._current_indicators['args'] = locals_data
+        self._current_indicators['func'] = self.sma
+
+        # Adding SMA
+        self._frame[column_name] = self._price_groups['close'].transform(
+            lambda x: x.rolling(window=period).mean()
+        )
+
+        return self._frame
+
+    def ema(self, period: int, alpha: float = 0.0) -> pd.DataFrame:
+        locals_data = locals()  # Shows me every argument that was passed in the function.
+        del locals_data['self']
+
+        column_name = 'ema'
+        self._current_indicators[column_name] = {}
+        self._current_indicators['args'] = locals_data
+        self._current_indicators['func'] = self.ema
+
+        self._frame[column_name] = self._price_groups['close'].transform(
+            lambda x: x.ewm(span=period).mean()
+        )
+
+        return self._frame
+
+    def refresh(self):
         pass
