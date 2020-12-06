@@ -68,8 +68,58 @@ class Indicator:
         column_name = 'change_in_price'
         self._current_indicators[column_name] = {}
         self._current_indicators['args'] = locals_data
-        self._current_indicators['func'] = self.change_in_price()
+        self._current_indicators['func'] = self.change_in_price
 
         self._frame[column_name] = self._price_groups['close'].transform(
             lambda x: x.diff()
         )
+
+    def rsi(self, period: int, method: str = "wilders") -> pd.DataFrame:
+        locals_data = locals()  # Shows me every argument that was passed in the function.
+        del locals_data['self']
+
+        column_name = 'rsi'
+        self._current_indicators[column_name] = {}
+        self._current_indicators['args'] = locals_data
+        self._current_indicators['func'] = self.rsi
+
+        if 'change_in_price' not in self._frame.columns:
+            self.change_in_price()
+
+        # Define the up days.
+        self._frame['up_day'] = self._price_groups['change_in_price'].transform(
+            lambda x: np.where(x >= 0, x, 0)
+        )
+
+        self._frame['down_day'] = self._price_groups['change_in_price'].transform(
+            lambda x: np.where(x < 0, x.abs(), 0)
+        )
+        """
+        EWMA = Exponentially weighted averages
+        Vt = Bvt-1 + (1-B)0t
+        """
+        self._frame['ewma_up'] = self._price_groups['change_in_price'].transform(
+            lambda x: x.ewm(span=period).mean()
+        )
+
+        self._frame['ewma_down '] = self._price_groups['change_in_price'].transform(
+            lambda x: x.ewm(span=period).mean()
+        )
+
+        relative_strength = self._frame['ewma_up'] / self._frame['ewma_down']
+
+        # VT BVT 0 1-B0t
+        relative_strength_index = 100.0 - (100.0 / (1.0 + relative_strength))
+
+        self._frame['rsi'] = np.where(relative_strength_index == 0, 100,100.0 - (100.0 / (1.0 + relative_strength)))
+
+        self._frame.drop(
+            labels=['ewma_up', 'ewma_down', 'down_day', 'up_day', 'change_in_price'],
+            axis=1,
+            inplace=True
+        )
+
+        return self._frame
+
+    def sma(self, period: int) -> pd.DataFrame:
+        pass
