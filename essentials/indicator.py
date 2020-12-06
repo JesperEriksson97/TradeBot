@@ -48,3 +48,28 @@ class Indicator:
     def price_data_frame(self, price_data_frame: pd.DataFrame) -> None:
 
         self._frame = price_data_frame
+
+    def change_in_price(self) -> pd.DataFrame:
+        """
+        Locals() is called here which shows us all the arguments passed in the function change_in_price()
+
+        For example, If we have a do_math(self, x, y, operator) method, then we would get a dict containing:
+
+            - self as the first key, this is self so it would refer to this indicator Object.
+            - x as the second key
+            - y as the third key
+            - operator as the fourth key
+
+        :return:  pd.DataFrame
+        """
+        locals_data = locals() # Shows me every argument that was passed in the function.
+        del locals_data['self']
+
+        column_name = 'change_in_price'
+        self._current_indicators[column_name] = {}
+        self._current_indicators['args'] = locals_data
+        self._current_indicators['func'] = self.change_in_price()
+
+        self._frame[column_name] = self._price_groups['close'].transform(
+            lambda x: x.diff()
+        )
