@@ -5,7 +5,7 @@ from datetime import time
 from datetime import datetime
 from datetime import timezone
 
-from typing import List
+from typing import List, Optional
 from typing import Dict
 from typing import Union
 
@@ -118,6 +118,39 @@ class Trade:
             self.side_opposite = 'short'
         elif self.side == 'short':
             self.side_opposite = 'long'
+
+        return self.order
+
+    def instrument(self, symbol: str, quantity: int, asset_type: str, sub_asset_type: str = None, order_leg_id: int = 0) -> dict:
+
+        leg = self.order['orderLegCollection'][order_leg_id]
+
+        leg['instrument']['symbol'] = symbol
+        leg['instrument']['asset_type'] = asset_type
+        leg['quantity'] = quantity
+
+        self.order_size = quantity
+        self.symbol = symbol
+        self.asset_type = asset_type
+
+        return leg
+
+    def good_till_cancel(self, cancel_time: datetime) -> None:
+
+        self.order['duration'] = 'GOOD_TILL_CANCEL'
+        self.order['cancelTime'] = cancel_time.isoformat()
+
+    def modify_side(self, side: Optional[str], order_leg_id: int = 0) -> None:
+
+        if side and side not in ['buy', 'sell', 'sell_short', 'but_to_cover']:
+            raise ValueError("You passed through an invalid side.")
+
+        if side:
+            self.side['orderLegCollection'][order_leg_id]['instructions'] = side.upper()
+        else:
+            self.order['orderLegCollection'][order_leg_id]['instructions'] = self.order_instructions[self.enter_or_exit][self.side_opposite]
+
+
 
 
 
