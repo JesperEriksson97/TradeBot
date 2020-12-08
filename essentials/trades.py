@@ -150,7 +150,28 @@ class Trade:
         else:
             self.order['orderLegCollection'][order_leg_id]['instructions'] = self.order_instructions[self.enter_or_exit][self.side_opposite]
 
+    def add_box_range(self, profit_size: float = 0.00, percentage: bool = False, stop_limit: bool = False):
+        if not self._trigger_added:
+            self._convert_to_trigger()
 
+        self.add_take_profit(profit_size=profit_size, percentage=percentage)
+
+        if not stop_limit:
+            self.add_stop_loss(stop_size=profit_size, percentage=percentage)
+
+    def add_stop_loss(self, stop_size: float, percentage: bool = False) -> bool:
+
+        if not self._trigger_added:
+            self._convert_to_trigger()
+
+        if self.order_type == 'mkt':
+            pass
+        elif self.order_type == 'lmt':
+            price = self.price
+
+        if percentage:
+            adjustment = 1.0 - stop_size
+            new_prize = self._calculate_new_price(price=price, adjustment=adjustment, percentage=True)
 
 
 
