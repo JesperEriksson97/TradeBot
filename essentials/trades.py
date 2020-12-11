@@ -317,7 +317,63 @@ class Trade:
             self.order['childOrderStrategies'] = []
             self._trigger_added = True
 
+    def modify_session(self, session: str) -> None:
+        #TODO: This might not be needed when trading with bitcoin.
+        if session in ['am', 'pm', 'normal', 'seamless']:
+            self.order['session'] = session.upper()
+        else:
+            raise ValueError("Invalid session")
 
+    @property
+    def order_response(self) -> dict:
+
+        return self._order_response
+
+    @order_response
+    def order_response(self, order_response_dict: dict) -> None:
+
+        self._order_response = order_response_dict
+
+    def _generate_order_id(self) -> str:
+
+        if self.order:
+
+            order_id = "{symbol}_{side}_{enter_or_exit}_{timestamp}"
+            order_id = order_id.format(
+                symbol=self.symbol,
+                side=self.side,
+                enter_or_exit=self.enter_or_exit,
+                timestamp=datetime.now().timestamp()
+            )
+
+            return order_id
+
+        else:
+
+            return ""
+
+    def add_leg(self, order_leg_id: int, symbol: str, quantity: int, asset_type: str, sub_asset_type: str=None) -> List[Dict]:
+
+        # Define the leg
+        leg = {}
+        leg['instrument']['symbol'] = symbol
+        leg['instrument']['assetType'] = asset_type
+        leg['quantity'] = quantity
+
+        if sub_asset_type:
+            leg['instrument']['subAssetType'] = sub_asset_type
+
+        if order_leg_id == 0:
+            self.instrument(
+                symbol=symbol,
+                asset_type=asset_type,
+                quantity=quantity,
+                sub_asset_type=sub_asset_type,
+                order_leg_id=0
+            )
+        else:
+            order_leg_collection: list = self.order['orderLegCollection']
+            order_leg_collection.insert(order_leg_id, leg)
 
 
 
