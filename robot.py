@@ -18,7 +18,7 @@ dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path, verbose=True)
 
 
-class PyRobot:
+class Robot:
     def __init__(self,
                  client_id: str,
                  redirect_uri: str,
