@@ -267,6 +267,57 @@ class Trade:
 
         return new_price
 
+    def add_take_profit(self, profit_size: float, percentage: bool = False) -> bool:
+
+        if not self._triggered_added:
+            self._convert_to_trigger()
+
+        if self.order_type == 'mkt':
+            pass
+        elif self.order_type == 'lmt':
+            price = self.price
+
+        if percentage:
+            # The adjustment will be based on a percentage.
+            adjustment = 1.0 - profit_size
+            profit_price = self._calculate_new_price(price=price, adjustment=adjustment, percentage=True)
+        else:
+            # The adjustment will be plain
+            adjustment = profit_size
+            profit_price = self._calculate_new_price(price=price, adjustment=adjustment, percentage=False)
+
+        take_profit_order = {
+            "order_type": "LIMIT",
+            "session": "NORMAL",
+            "duration": "DAY",
+            "price": profit_price,
+            "orderStrategyType": "SINGLE",
+            "orderLegCollection": [
+                {
+                    "instruction": self.order_instructions[self.enter_or_exit_opposite][self.side],
+                    "quantity": self.order_size,
+                    "instrument": {
+                        "symbol": self.symbol,
+                        "assetType": self.asset_type
+                    }
+                }
+            ]
+        }
+
+        # Add the order.
+        self.take_profit_order = take_profit_order
+        self.order['childOrderStrategies'].append(self.take_profit_order)
+
+        return True
+
+    def _convert_to_trigger(self):
+
+        if self.order and self._trigger_added == False:
+            self.order['orderStrategyType'] = 'TRIGGER'
+            self.order['childOrderStrategies'] = []
+            self._trigger_added = True
+
+
 
 
 
