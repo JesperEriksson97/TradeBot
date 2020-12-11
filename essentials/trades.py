@@ -338,7 +338,7 @@ class Trade:
 
         if self.order:
 
-            order_id = "{symbol}_{side}_{enter_or_exit}_{timestamp}"
+            order_id = "{symbol}_{side}_{enter _or_exit}_{timestamp}"
             order_id = order_id.format(
                 symbol=self.symbol,
                 side=self.side,
@@ -374,6 +374,8 @@ class Trade:
         else:
             order_leg_collection: list = self.order['orderLegCollection']
             order_leg_collection.insert(order_leg_id, leg)
+
+        return self.order['orderLegCollection']
 
 
 
