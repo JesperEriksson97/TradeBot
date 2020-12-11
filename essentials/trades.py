@@ -245,6 +245,28 @@ class Trade:
         self.stop_limit_order = stop_limit_order
         self.order['childOrderStrategies'].append(self.stop_limit_order)
 
+        return True
+
+    def _calculate_new_price(self, price: float, adjustment: float, percentage: bool) -> float:
+        """
+        :param price: This is the price which should be re calculated
+        :param adjustment: The adjustment to made
+        :param percentage: This determiens wheter the adjustment are of
+        a percentage stake or just simply an addition / subtraction of the price.
+        :return: float new_price
+        """
+        if percentage:
+            new_price = price * adjustment
+        else:
+            new_price = price + adjustment
+
+        if new_price < 1:
+            new_price = round(new_price, 4)
+        else:
+            new_price = round(new_price, 2)
+
+        return new_price
+
 
 
 
