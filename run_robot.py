@@ -13,7 +13,5 @@ from configparser import ConfigParser
 from robot import Robot
 from essentials.indicators import Indicators
 
-api_key = os.environ.get("BINANCE_PUBLIC_KEY")
-api_secret = os.environ.get("BINANCE_PRIVATE_KEY")
 
 robot = Robot()

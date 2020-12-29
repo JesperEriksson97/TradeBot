@@ -14,16 +14,19 @@ from typing import List
 from typing import Dict
 from typing import Union
 
+from essentials.portfolio import Portfolio
+
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path, verbose=True)
 
 
 class Robot:
     def __init__(self,
-                 client_id: str,
-                 redirect_uri: str,
+                 client_id: str = None,
+                 redirect_uri: str = None,
                  credentials_path: str = None,
-                 trading_account: str = None)\
+                 trading_account: str = None,
+                 paper_trading: bool = True)\
                  -> None:
 
         print("Initiating...")
@@ -35,11 +38,15 @@ class Robot:
         self.trades: dict = {}
         self.historical_prices: dict = {}
         self.stock_frame = None
+        self.paper_trading = paper_trading
 
-        client = self._create_client(self)
+        client = self._create_client()
 
+        info = client.get_asset_balance(asset="BTC")
+        print(info['free'])
         depth = client.get_order_book(symbol='BNBBTC')
-        print(depth)
+        print("hello")
+        # print(depth)
 
     def _create_client(self) -> Client:
         api_key = os.environ.get("BINANCE_PUBLIC_KEY")
@@ -81,7 +88,8 @@ class Robot:
             return False
 
     def create_portfolio(self):
-        pass
+        # Init a new portfolio
+        self.portfolio = Portfolio(account_nu,b)
 
     def create_trade(self):
         pass
